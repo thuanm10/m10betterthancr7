@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kiểm tra dữ liệu</title>
+<style>
+  body { font: 14px/1.5 system-ui, sans-serif; margin: 16px; background: #fff; color: #111; }
+  table { border-collapse: collapse; width: 100%; margin-bottom: 24px; }
+  td, th { border: 1px solid #ccc; padding: 4px 8px; text-align: left; vertical-align: top; }
+  .bad { background: #fee2e2; } .warn { background: #fef9c3; } .good { background: #dcfce7; }
+  h1 { font-size: 20px; } h2 { font-size: 17px; margin-top: 28px; }
+  button { font: inherit; padding: 8px 14px; border-radius: 8px; border: 1px solid #888; background: #f3f4f6; cursor: pointer; }
+</style>
+</head>
+<body>
+<h1>Kiểm tra toàn bộ dữ liệu phức chất</h1>
+<p>Trang này đọc <code>js/data.js</code>, tự sinh tên cho từng chất và báo lỗi (đỏ) hoặc cảnh báo (vàng). Mở lại trang này sau mỗi lần thêm phức chất mới.</p>
+<p id="sum"></p>
+<p><button id="dl">Tải complexes.json</button> <small>– file gồm: formula, name_vi, name_iupac, name_iupac_old, phien_am, steps_vi, steps_iupac của từng chất (sinh tự động).</small></p>
+
+<h2>1. Kiểm tra tên mẫu (khóa quy tắc gọi tên)</h2>
+<p>Các cặp công thức → tên dưới đây là đáp án chuẩn. Nếu sửa <code>chem.js</code> hay bảng phối tử/kim loại mà làm sai một dòng, dòng đó sẽ tô đỏ.</p>
+<table id="golden"><thead><tr><th>Công thức</th><th>Chế độ</th><th>Mong đợi</th><th>Web sinh ra</th></tr></thead><tbody></tbody></table>
+
+<h2>2. Toàn bộ thư viện</h2>
+<table id="t"><thead><tr><th>#</th><th>Công thức</th><th>Tên tiếng Việt</th><th>IUPAC (mới)</th><th>IUPAC (cũ)</th><th>Phiên âm</th><th>SOH</th><th>SPT</th><th>Hình học</th><th>Ghi chú</th></tr></thead><tbody></tbody></table>
+<script src="../js/data.js"></script>
+<script src="../js/chem.js"></script>
+<script>
+  var GOLDEN = [
+    ['[Cu(NH3)4]2+', 'vi', 'ion tetraammin đồng(II)'],
+    ['[Ag(NH3)2]+', 'vi', 'ion điammin bạc(I)'],
+    ['[Fe(CN)6]3-', 'vi', 'ion hexaxianoferat(III)'],
+    ['K3[Fe(CN)6]', 'vi', 'kali hexaxianoferat(III)'],
+    ['K4[Fe(CN)6]', 'vi', 'kali hexaxianoferat(II)'],
+    ['[Cu(NH3)4]SO4', 'vi', 'tetraammin đồng(II) sunfat'],
+    ['[Pt(NH3)2Cl2]', 'vi', 'điamminđicloro platin(II)'],
+    ['[Co(NH3)4Cl2]+', 'vi', 'ion tetraamminđicloro coban(III)'],
+    ['[CoCl4]2-', 'vi', 'ion tetraclorocobaltat(II)'],
+    ['[Zn(OH)4]2-', 'vi', 'ion tetrahiđroxozincat(II)'],
+    ['[Co(en)3]Cl3', 'vi', 'tris(etylenđiamin) coban(III) clorua'],
+    ['[Ni(CO)4]', 'vi', 'tetracacbonyl niken(0)'],
+    ['[Cu(NH3)4]2+', 'en', 'tetraamminecopper(II) ion'],
+    ['[Fe(CN)6]3-', 'en', 'hexacyanidoferrate(III) ion'],
+    ['K4[Fe(CN)6]', 'en', 'potassium hexacyanidoferrate(II)'],
+    ['[Pt(NH3)2Cl2]', 'en', 'diamminedichloridoplatinum(II)'],
+    ['[Co(NH3)5Cl]Cl2', 'en', 'pentaamminechloridocobalt(III) chloride'],
+    ['[CuCl4]2-', 'en', 'tetrachloridocuprate(II) ion'],
+    ['[Ag(S2O3)2]3-', 'en', 'bis(thiosulfato)argentate(I) ion'],
+    ['K3[Fe(CN)6]', 'old', 'potassium hexacyanoferrate(III)'],
+    ['[Pt(NH3)2Cl2]', 'old', 'diamminedichloroplatinum(II)']
+  ];
+  var bad = 0, warn = 0;
+  function nm(f, mode) {
+    Chem.setLigandStyle(mode === 'old' ? 'old' : 'new');
+    var a = Chem.analyze(f); Chem.setLigandStyle('new');
+    return a.ok ? (mode === 'vi' ? a.nameVi : a.nameEn) : 'LỖI: ' + a.error;
+  }
+  var gb = document.querySelector('#golden tbody');
+  GOLDEN.forEach(function (g) {
+    var got = nm(g[0], g[1]), ok = got === g[2], tr = document.createElement('tr');
+    tr.className = ok ? 'good' : 'bad'; if (!ok) bad++;
+    tr.innerHTML = '<td>' + g[0] + '</td><td>' + ({ vi: 'VI', en: 'IUPAC mới', old: 'IUPAC cũ' })[g[1]] + '</td><td>' + g[2] + '</td><td>' + got + '</td>';
+    gb.appendChild(tr);
+  });
+
+  function plain(steps) { var d = document.createElement('div'); return steps.map(function (s, i) { d.innerHTML = s.html; return 'Bước ' + (i + 1) + ': ' + s.title + ' – ' + d.textContent.replace(/\s+/g, ' ').trim(); }); }
+  function slugOf(ascii) { return ascii.replace(/\+/g, 'plus').replace(/-/g, 'minus').replace(/[^A-Za-z0-9]+/g, '-').replace(/^-|-$/g, '').toLowerCase(); }
+  var tb = document.querySelector('#t tbody'), seen = {}, slugs = {}, json = [];
+  COMPLEXES.forEach(function (c, i) {
+    var old = nm(c.f, 'old'), a = Chem.analyze(c.f, c.geo), tr = document.createElement('tr'), notes = [];
+    if (!a.ok) { notes.push(a.error + ' ' + a.hint); tr.className = 'bad'; bad++; }
+    else {
+      if (seen[a.ascii]) { notes.push('Trùng với dòng ' + seen[a.ascii]); tr.className = 'bad'; bad++; }
+      seen[a.ascii] = i + 1;
+      var sl = slugOf(a.ascii);
+      if (slugs[sl]) { notes.push('Đường dẫn /thu-vien/' + sl + ' trùng với dòng ' + slugs[sl]); tr.className = 'bad'; bad++; }
+      slugs[sl] = i + 1;
+      if ([1, 2, 3].indexOf(c.lv) < 0) { notes.push('Thiếu mức độ lv (1/2/3)'); tr.className = 'bad'; bad++; }
+      if (c.name_vi && c.name_vi !== a.nameVi) notes.push('Tên VI ghi đè khác tên tự sinh: ' + a.nameVi);
+      if (c.name_iupac && c.name_iupac !== a.nameEn) notes.push('Tên IUPAC ghi đè khác tên tự sinh: ' + a.nameEn);
+      var miss = a.partsEn.map(function (pt) { return (pt.s || pt.t).replace(/[()]/g, ''); }).filter(function (w) { return PHONETIC[w] === undefined; });
+      if (miss.length) notes.push('Chưa có phiên âm cho: ' + miss.join(', '));
+      if (a.warnings.length) notes = notes.concat(a.warnings);
+      if (notes.length && !tr.className) { tr.className = 'warn'; warn++; }
+      json.push({ formula: a.ascii, formula_display: a.formula, name_vi: c.name_vi || a.nameVi, name_iupac: c.name_iupac || a.nameEn, name_iupac_old: old,
+        phien_am: a.phonetic, steps_vi: plain(a.stepsVi), steps_iupac: plain(a.stepsEn), oxidation_state: a.os, coordination_number: a.cn,
+        geometry: a.geoVi, type: a.kindVi, level: c.lv, color: c.color, note: c.note, aka: c.aka || '' });
+    }
+    tr.innerHTML = '<td>' + (i + 1) + '</td><td>' + (a.ok ? a.formula : c.f) + '</td><td>' + (a.nameVi || '') + '</td><td>' + (a.nameEn || '') + '</td><td>' + (a.ok ? old : '') +
+      '</td><td>' + (a.phonetic || '') + '</td><td>' + (a.ok ? Chem.signed(a.os) : '') + '</td><td>' + (a.cn || '') + '</td><td>' + (a.geoVi || '') + '</td><td>' + notes.join('<br>') + '</td>';
+    tb.appendChild(tr);
+  });
+  document.getElementById('sum').textContent = 'Tổng: ' + COMPLEXES.length + ' phức chất, ' + GOLDEN.length + ' tên mẫu – ' + bad + ' lỗi, ' + warn + ' cảnh báo.';
+  document.getElementById('dl').addEventListener('click', function () {
+    var blob = new Blob([JSON.stringify(json, null, 2)], { type: 'application/json' }), a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = 'complexes.json'; a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+  });
+</script>
+</body>
+</html>

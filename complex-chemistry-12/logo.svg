@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="42 -4 270 270" role="img" aria-label="Logo Complex Chemistry 12">
+  <!-- Logo "T lồng số 10", lấy từ mẫu Monogram sang trọng × Nº 10 (mẫu số 2) -->
+  <defs>
+    <clipPath id="ringFront"><rect x="-90" y="0" width="180" height="50"/></clipPath>
+    <path id="ring0" fill-rule="evenodd" d="M-68 0 a68 29 0 1 0 136 0 a68 29 0 1 0 -136 0 Z M-56 -2 a60 21 0 1 0 120 0 a60 21 0 1 0 -120 0 Z"/>
+    <path id="star" d="M0 -13 L2.6 -2.6 L13 0 L2.6 2.6 L0 13 L-2.6 2.6 L-13 0 L-2.6 -2.6 Z"/>
+  </defs>
+  <rect x="42" y="-4" width="270" height="270" rx="40" fill="#0E0E0E"/>
+  <g fill="#F4F2EE">
+    <!-- vệt bay của bóng -->
+    <path d="M58 200 C 100 238, 250 232, 306 150" fill="none" stroke="#75AADB" stroke-width="1" opacity="0.45"/>
+    <circle cx="58" cy="200" r="1.6" fill="#75AADB" opacity="0.6"/>
+    <circle cx="48" cy="190" r="1" fill="#75AADB" opacity="0.4"/>
+    <!-- số 0: nửa sau (nằm sau thân chữ) -->
+    <g transform="translate(179 158) rotate(-16)"><use href="#ring0" fill="#75AADB"/></g>
+    <!-- thanh ngang chữ T -->
+    <path d="M94 66 C 140 80, 222 80, 264 66 L 262 82 C 222 92, 140 92, 96 82 Z"/>
+    <path d="M96 70 C 91 80, 91 92, 98 106 C 100 95, 102 86, 106 78 Z"/>
+    <path d="M262 68 C 274 63, 282 55, 287 44" fill="none" stroke="#F4F2EE" stroke-width="2" stroke-linecap="round"/>
+    <use href="#star" transform="translate(296 34) scale(0.85)" fill="#75AADB"/>
+    <circle cx="276" cy="30" r="1.8" fill="#75AADB"/>
+    <!-- thân chữ T = số 1 -->
+    <path d="M169 84 L189 84 L189 226 C 189 232, 196 234, 214 235 L214 239 L144 239 L144 235 C 162 234, 169 232, 169 226 Z"/>
+    <path d="M169 100 C 160 110, 150 116, 138 120 L139 116 C 152 110, 161 103, 169 94 Z"/>
+    <!-- số 0: nửa trước (vắt qua thân chữ) -->
+    <g transform="translate(179 158) rotate(-16)"><use href="#ring0" fill="#75AADB" stroke="#0E0E0E" stroke-width="4" paint-order="stroke" clip-path="url(#ringFront)"/></g>
+  </g>
+</svg>

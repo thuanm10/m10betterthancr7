@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Complex Chemistry 12 – Luyện Đọc Tên Phức Chất</title>
+  <meta name="description" content="Web học gọi tên phức chất theo SGK Hóa học 12: gọi tên từng bước, luyện tập, đề kiểm tra, thư viện phức chất và lý thuyết. Dự án của học sinh THPT Nguyễn Đình Chiểu.">
+  <meta name="theme-color" content="#0f766e">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Complex Chemistry 12">
+  <meta property="og:title" content="Complex Chemistry 12 – Học gọi tên phức chất Hóa học 12">
+  <meta property="og:description" content="Nhập công thức, xem cách gọi tên từng bước. Có bài luyện tập, đề kiểm tra và thư viện phức chất theo SGK Hóa học 12.">
+  <meta property="og:url" content="https://m10betterthancr7.netlify.app/">
+  <meta property="og:image" content="https://m10betterthancr7.netlify.app/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="vi_VN">
+  <meta name="twitter:card" content="summary_large_image">
+  <script>
+    /* Đường dẫn thường (/thu-vien) → chuyển sang dạng hash (/#/thu-vien) */
+    (function () {
+      var p = location.pathname;
+      if (location.protocol !== 'file:' && p !== '/' && !/\/index\.html$/.test(p) && !location.hash) location.replace('/#' + p + location.search);
+    })();
+    /* áp dụng chế độ sáng/tối trước khi vẽ trang để không bị nháy */
+    (function () {
+      var d = document.documentElement;
+      try { var t = localStorage.getItem('cc12-theme'); if (t === 'light' || t === 'dark') d.setAttribute('data-theme', t); } catch (e) {}
+      try { var s = JSON.parse(localStorage.getItem('cc12-settings') || '{}'); d.setAttribute('data-mode', s.nameMode === 'iupac' ? 'iupac' : 'vi'); } catch (e) { d.setAttribute('data-mode', 'vi'); }
+    })();
+  </script>
+  <link rel="icon" href="logo.svg" type="image/svg+xml">
+  <link rel="alternate icon" href="favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Thanh trên cùng (điện thoại / máy tính bảng) -->
+  <header class="topbar" id="topbar">
+    <button class="icon-btn" id="menuOpen" aria-label="Mở menu" aria-controls="sidebar" aria-expanded="false"><i data-lucide="menu"></i></button>
+    <a href="#/" class="brand"><span class="brand-logo"><img src="logo.svg" alt="" width="36" height="36"></span><span class="brand-text">COMPLEX<b>CHEMISTRY 12</b></span></a>
+    <button class="mode-toggle" data-mode-toggle></button>
+    <button class="icon-btn theme-btn" data-theme-toggle aria-label="Chuyển chế độ sáng/tối"><i data-lucide="moon" class="ic-moon"></i><i data-lucide="sun" class="ic-sun"></i></button>
+  </header>
+
+  <!-- Thanh bên: cố định trên máy tính, trượt ra từ trái trên điện thoại -->
+  <div class="drawer-backdrop" id="drawerBackdrop" hidden></div>
+  <aside class="sidebar" id="sidebar" aria-label="Menu chính">
+    <div class="sidebar-head">
+      <a href="#/" class="brand"><span class="brand-logo"><img src="logo.svg" alt="" width="36" height="36"></span><span class="brand-text">COMPLEX<b>CHEMISTRY 12</b></span></a>
+      <button class="icon-btn drawer-close" id="menuClose" aria-label="Đóng menu"><i data-lucide="x"></i></button>
+    </div>
+    <button class="mode-toggle wide" data-mode-toggle></button>
+    <nav class="side-nav" id="sideNav"></nav>
+    <div class="sidebar-foot">
+      <a class="side-account" id="sideAccount" href="#/dang-nhap"><i data-lucide="user-round"></i><span>Đăng nhập</span></a>
+      <button class="btn btn-ghost btn-sm w100" data-theme-toggle><i data-lucide="moon" class="ic-moon"></i><i data-lucide="sun" class="ic-sun"></i> <span>Sáng / Tối</span></button>
+    </div>
+  </aside>
+
+  <main class="main" id="main">
+    <div class="page-wrap" id="app" aria-live="polite"></div>
+    <footer class="footer">
+      <p>Complex Chemistry 12 – Luyện Đọc Tên Phức Chất · <span id="ftYear"></span></p>
+    </footer>
+  </main>
+
+  <!-- Thanh điều hướng dưới đáy (điện thoại / bản app) -->
+  <nav class="bottom-nav" id="bottomNav" aria-label="Điều hướng nhanh"></nav>
+
+  <!-- Hai nút nổi xếp thành một cột nên không bao giờ chồng lên nhau -->
+  <div class="floaters" id="floaters">
+    <button class="to-top" id="toTop" aria-label="Lên đầu trang" title="Lên đầu trang"><i data-lucide="arrow-up"></i></button>
+    <a href="#/lien-he" class="fab-report" id="fabReport"><i data-lucide="bug"></i><span>Báo lỗi</span></a>
+  </div>
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+  <div id="printArea" class="print-area" aria-hidden="true"></div>
+
+  <!-- Form tĩnh để Netlify nhận diện (form thật được vẽ ở trang Liên hệ, gửi bằng JavaScript) -->
+  <form name="bao-loi" data-netlify="true" netlify-honeypot="bot-field" enctype="multipart/form-data" hidden>
+    <input type="hidden" name="form-name" value="bao-loi">
+    <input name="bot-field"><input name="che-do"><input name="ho-ten"><input name="email" type="email">
+    <select name="loai-su-co"><option>Sai tên gọi</option></select>
+    <select name="muc-bi-loi"><option>Khác</option></select>
+    <textarea name="mo-ta"></textarea><input name="anh-chup" type="file">
+  </form>
+
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/chem.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/speech.js"></script>
+  <script src="js/quiz.js"></script>
+  <script src="js/lessons.js"></script>
+  <script src="js/lessons-iupac.js"></script>
+  <script src="js/router.js"></script>
+  <script src="js/pages-hoc.js"></script>
+  <script src="js/pages-luyen.js"></script>
+  <script src="js/pages-khac.js"></script>
+  <script src="js/exam.js"></script>
+  <script src="js/pages-de.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/pages-forum.js"></script>
+  <script src="js/baitap-28.js"></script>
+  <script src="js/baitap-29.js"></script>
+  <script src="js/pages-baitap.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

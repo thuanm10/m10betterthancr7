@@ -1,0 +1,3 @@
+# Netlify: mọi đường dẫn không phải file (ví dụ /thu-vien) đều mở index.html.
+# Web dùng Hash Router (/#/thu-vien) nên dòng này chỉ để phòng khi ai đó gõ đường dẫn thường.
+/*    /index.html   200
